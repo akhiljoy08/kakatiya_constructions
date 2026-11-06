@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { ArrowRight, ClipboardCheck, Clock, HardHat, KeyRound, MapPin, Phone, Quote, Star } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, ClipboardCheck, Clock, HardHat, KeyRound, MapPin, Phone, Quote, Star } from 'lucide-react';
 import { Hero } from '../components/Hero';
 import { SectionTitle } from '../components/SectionTitle';
 import { ProjectCard } from '../components/ProjectCard';
@@ -9,14 +9,16 @@ import { WhyChooseUs } from '../components/WhyChooseUs';
 import { Reveal, RevealImage } from '../components/Reveal';
 import { Parallax } from '../components/Parallax';
 import { projects, testimonials } from '../data/mockData';
-import { company } from '../data/company';
+import { company, mapsUrl } from '../data/company';
 
 const aboutImage = projects[5];
 // Ongoing projects lead, then the rest — three cards in total
 const futureProjects = [...projects].sort((a, b) => Number(b.status === 'Ongoing') - Number(a.status === 'Ongoing')).slice(0, 3);
 
 const detailImage = projects[2];
-const ctaImage = projects[4];
+// Office location for the map in the closing section (Road No. 12, Banjara Hills)
+const officeArea = company.address.split(',').slice(2, 4).join(',').trim();
+const mapEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(company.address)}&z=15&output=embed`;
 
 // Wording drawn from claims the site already makes (approvals, materials, engineers, delivery, support)
 const buildSteps = [
@@ -200,67 +202,68 @@ export const Home = () => {
         </div>
       </section>
 
-      {/* CTA — split card: copy on navy, photo beside it */}
-      <section className="bg-paper pb-24 md:pb-32" aria-labelledby="cta-title">
-        <div className="container-x">
-          <Reveal className="relative grid overflow-hidden rounded-3xl bg-navy shadow-[0_40px_80px_-40px_rgba(19,35,57,0.6)] lg:grid-cols-2">
-            {/* Soft light from the top-left corner */}
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0"
-              style={{ background: 'radial-gradient(60% 80% at 0% 0%, rgba(139,184,232,0.18), transparent 60%)' }}
-            />
+      {/* CTA — full-width split band (no card): copy left, office map to the right edge */}
+      <section className="grid border-t border-line bg-paper lg:grid-cols-2" aria-labelledby="cta-title">
+        <Reveal className="flex flex-col justify-center px-5 py-20 sm:px-8 md:py-24 lg:py-28 lg:pr-16 lg:pl-[max(3rem,calc((100vw-1240px)/2+3rem))]">
+          <p className="eyebrow mb-6">Visit us</p>
+          <h2 id="cta-title" className="display-lg">
+            Ready to find your <em className="text-gold-deep">dream home?</em>
+          </h2>
+          <p className="lead mt-6 max-w-md">
+            Contact our experts today for a personalized consultation and site visit to our ongoing projects.
+          </p>
 
-            <div className="relative p-8 sm:p-12 lg:p-14 xl:p-16">
-              <p className="eyebrow eyebrow-light mb-6">Visit us</p>
-              <h2 id="cta-title" className="display-lg text-white">
-                Ready to find your <em className="text-gold">dream home?</em>
-              </h2>
-              <p className="mt-6 max-w-md text-base leading-relaxed text-white/75 md:text-lg">
-                Contact our experts today for a personalized consultation and site visit to our ongoing projects.
-              </p>
+          <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:gap-4">
+            <Link to="/contact" className="btn btn-gold group">
+              Book a site visit
+              <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
+            </Link>
+            <a href={company.phones[0].href} className="btn btn-outline-dark">
+              <Phone size={14} aria-hidden="true" />
+              Call us now
+            </a>
+          </div>
 
-              <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:gap-4">
-                <Link to="/contact" className="btn btn-light group">
-                  Book a site visit
-                  <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
-                </Link>
-                <a href={company.phones[0].href} className="btn btn-outline-light">
-                  <Phone size={14} aria-hidden="true" />
-                  Call us now
-                </a>
-              </div>
+          <ul className="mt-10 grid max-w-lg gap-3 border-t border-line pt-8 text-sm text-muted sm:grid-cols-2">
+            <li className="flex items-start gap-3">
+              <MapPin size={16} className="mt-0.5 shrink-0 text-gold-deep" aria-hidden="true" />
+              <span>{officeArea}</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <Clock size={16} className="mt-0.5 shrink-0 text-gold-deep" aria-hidden="true" />
+              <span>{company.hours[0]}</span>
+            </li>
+          </ul>
+        </Reveal>
 
-              <ul className="mt-10 grid gap-3 border-t border-white/10 pt-8 text-sm text-white/75 sm:grid-cols-2">
-                <li className="flex items-start gap-3">
-                  <MapPin size={16} className="mt-0.5 shrink-0 text-gold" aria-hidden="true" />
-                  <span>{company.address.split(',').slice(2, 4).join(',').trim()}</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Clock size={16} className="mt-0.5 shrink-0 text-gold" aria-hidden="true" />
-                  <span>{company.hours[0]}</span>
-                </li>
-              </ul>
-            </div>
-
-            <RevealImage delay={0.25} radius={0} className="group relative min-h-[18rem] lg:min-h-full">
-              <Parallax strength={6}>
-                <img
-                  src={ctaImage.image}
-                  alt={`${ctaImage.name}, ${ctaImage.location}`}
-                  loading="lazy"
-                  decoding="async"
-                  className="h-full w-full object-cover transition-transform duration-[1500ms] ease-out-soft group-hover:scale-105"
-                />
-              </Parallax>
-              {/* Blend the photo into the navy panel */}
-              <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-navy/60 to-transparent lg:bg-gradient-to-r lg:from-navy lg:via-navy/10 lg:via-25% lg:to-transparent" />
-              <span className="absolute right-5 bottom-5 rounded-full bg-white/90 px-3 py-1.5 text-[11px] font-semibold text-navy backdrop-blur-md">
-                {ctaImage.name} · {ctaImage.location.split(',')[0]}
-              </span>
-            </RevealImage>
-          </Reveal>
-        </div>
+        {/* Google Map of the office location (embed — no API key needed) */}
+        <RevealImage delay={0.2} radius={0} className="relative min-h-[22rem] sm:min-h-[26rem] lg:min-h-full">
+          <iframe
+            title={`Map showing ${company.name}, ${officeArea}`}
+            src={mapEmbedUrl}
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            className="absolute inset-0 h-full w-full border-0"
+          />
+          <a
+            href={mapsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group absolute bottom-5 left-5 flex items-center gap-3 rounded-2xl bg-white/95 p-3 pr-5 shadow-[0_20px_40px_-20px_rgba(19,35,57,0.55)] ring-1 ring-line backdrop-blur-md transition-transform duration-300 hover:-translate-y-0.5"
+          >
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-cta text-white" aria-hidden="true">
+              <MapPin size={18} />
+            </span>
+            <span>
+              <span className="block text-[10px] font-bold uppercase tracking-[0.2em] text-muted">Our office</span>
+              <span className="block text-sm font-semibold text-navy">{officeArea}</span>
+            </span>
+            <span className="ml-2 inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-[0.14em] text-gold-deep">
+              Directions
+              <ArrowUpRight size={14} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
+            </span>
+          </a>
+        </RevealImage>
       </section>
     </main>
   );
