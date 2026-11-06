@@ -1,0 +1,164 @@
+@import "tailwindcss";
+
+/*
+ * Site palette — White & Navy (client: white is the primary colour; the
+ * earlier gold/red accents were hard on the eyes).
+ * White surfaces everywhere, a barely-there cool grey for alternating
+ * bands, deep navy for ink/footer/buttons and a calm steel-blue accent.
+ * Blue is the complement of the logo's orange, so the logo stands out.
+ * All text pairings pass WCAG AA (min 5.3:1).
+ * Token names are kept from the original theme so components didn't need
+ * renaming: "navy" = ink navy, "gold" = light accent (on dark & photos),
+ * "gold-deep" = accent text on light, "ivory" = light grey band.
+ */
+@theme {
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "DM Serif Display", ui-serif, Georgia, serif;
+
+  --color-navy: #132339;        /* Deep navy — headings, footer, dark accents */
+  --color-navy-2: #1C304B;
+  --color-gold: #8BB8E8;        /* Light steel blue — accents on dark & photos (7.6 on navy) */
+  --color-gold-light: #B3D1F1;
+  --color-gold-deep: #1E5AA8;   /* Accent text & icons on light (6.0+ on all light surfaces) */
+  --color-ivory: #EAF0F8;       /* Soft blue tint — alternating sections (clearly distinct from white) */
+  --color-biscuit-deep: #E2EAF5; /* Deeper tint — emphasis bands */
+  --color-paper: #FFFFFF;       /* White — primary surface */
+  --color-charcoal: #2B3440;    /* Body text */
+  --color-muted: #5A6472;       /* Secondary text */
+  --color-line: #D8E1EC;        /* Hairlines */
+
+  /* Primary call-to-action button — white on navy-blue, 8.3:1 */
+  --color-cta: #1E4E8C;
+  --color-cta-hover: #173F73;
+  --color-cta-text: #FFFFFF;
+
+  /* Navbar — white bar, navy text */
+  --color-nav-solid: #FFFFFF;
+  --color-nav-ink: #132339;
+  --color-nav-accent: #1E5AA8;
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  /* Lenis drives scrolling when active; native smooth-scroll would fight it */
+  html.lenis {
+    scroll-behavior: auto;
+  }
+  body {
+    @apply font-sans text-charcoal bg-ivory;
+    font-feature-settings: "ss01", "cv11";
+  }
+  h1, h2, h3, h4 {
+    @apply font-serif font-normal text-navy;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  ::selection {
+    @apply bg-gold text-navy;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-gold-deep);
+    outline-offset: 3px;
+  }
+}
+
+/* Hero slider autoplay bar (its animationend advances the slide) */
+@keyframes hero-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+@layer components {
+  /* Layout */
+  .container-x {
+    @apply mx-auto w-full max-w-[1240px] px-5 sm:px-8 lg:px-12;
+  }
+
+  .section {
+    @apply py-20 md:py-28 lg:py-32;
+  }
+
+  /* Typography */
+  .eyebrow {
+    @apply inline-flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.28em] text-gold-deep;
+  }
+  .eyebrow::before {
+    content: "";
+    @apply block h-px w-8 bg-current;
+  }
+  .eyebrow-light {
+    @apply text-gold;
+  }
+
+  .display-xl {
+    @apply text-[2.75rem] leading-[1.02] sm:text-6xl lg:text-[5.25rem];
+  }
+  .display-lg {
+    @apply text-4xl leading-[1.08] md:text-5xl lg:text-[3.5rem];
+  }
+  .lead {
+    @apply text-base leading-relaxed text-muted md:text-lg md:leading-[1.75];
+  }
+
+  /* Buttons — combine `btn` with one variant, e.g. "btn btn-gold" */
+  .btn {
+    @apply inline-flex items-center justify-center gap-3 rounded-full border border-transparent px-7 py-4 text-[12px] font-bold uppercase tracking-[0.18em] transition-[background-color,border-color,color,box-shadow,translate] duration-300 hover:-translate-y-0.5 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+  .btn-gold {
+    @apply bg-cta text-cta-text hover:bg-cta-hover;
+  }
+  /* Bright construction-gold button for use on dark imagery */
+  .btn-accent {
+    @apply bg-cta text-cta-text hover:bg-cta-hover;
+  }
+  .btn-light {
+    @apply bg-white text-navy hover:bg-gold-light;
+  }
+  .btn-navy {
+    @apply bg-navy text-white hover:bg-navy-2;
+  }
+  .btn-outline-light {
+    @apply border-white/25 text-white hover:border-gold hover:text-gold;
+  }
+  .btn-outline-dark {
+    @apply border-navy/20 text-navy hover:border-navy hover:bg-navy hover:text-white;
+  }
+
+  .link-arrow {
+    @apply inline-flex items-center gap-3 text-[12px] font-bold uppercase tracking-[0.18em] text-navy;
+  }
+  .link-arrow > span:first-child {
+    background: linear-gradient(currentColor, currentColor) left bottom / 0% 1px no-repeat;
+    @apply pb-1 transition-[background-size] duration-500;
+  }
+  .link-arrow:hover > span:first-child {
+    background-size: 100% 1px;
+  }
+
+  /* Forms */
+  .field-label {
+    @apply mb-2 block text-[11px] font-semibold uppercase tracking-[0.2em] text-muted;
+  }
+  .field {
+    @apply w-full border-0 border-b border-line bg-transparent px-0 py-3 text-base text-charcoal placeholder:text-muted/60 transition-[border-color,box-shadow] focus:border-gold-deep focus:shadow-[0_1px_0_0_var(--color-gold-deep)] focus:outline-none focus-visible:outline-none;
+  }
+}
